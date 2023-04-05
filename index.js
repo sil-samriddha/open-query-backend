@@ -14,8 +14,8 @@ app.use(bodyParser.json())
 
 // Configure
 const configuration = new Configuration({
-    organization: "org-vAWVnKO9gPzPJwpKwemzANyo",
-    apiKey: "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"
+    organization: process.env.ORG,
+    apiKey: process.env.API_KEY
 })
 const openai = new OpenAIApi(configuration)
 
@@ -26,7 +26,7 @@ app.listen(port, ()=>console.log(`listening on port ${port}`))
 
 // dummy route
 app.get("/", (req, res) => {
-    res.send(`Server is running on port : ${port}`)
+    res.send(`Open Query Server is running on port : ${port}`)
 })
 
 
