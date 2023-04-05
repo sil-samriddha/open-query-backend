@@ -1,3 +1,4 @@
+// text-davinci-003 model
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
@@ -15,35 +16,36 @@ app.use(bodyParser.json())
 // Configure
 const configuration = new Configuration({
     organization: process.env.ORG,
-    apiKey: process.env.API_KEY
+    apiKey: process.env.API_KEY 
 })
 const openai = new OpenAIApi(configuration)
 
 const port = 4000
 // listeninng
-app.listen(port, ()=>console.log(`listening on port ${port}`))
+app.listen(port, ()=>console.log(`Open Query server is running on port ${port}`))
 
 
 // dummy route
 app.get("/", (req, res) => {
-    res.send(`Open Query Server is running on port : ${port}`)
+    res.send(`Server is running on port : ${port}`)
 })
 
 
-//post rout
+//post route
 app.post('/', async (req, res)=>{
-    const {message} = req.body;
+    const {message} = req.body
+
     try{
-        const response = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
-            messages: [
-                {role: "user", content: `${message}`},
-            ]
+        const response = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: `${message}`,
+            max_tokens: 512,
+            temperature: .5
         })
-        res.json({message: response.data.choices[0].message.content})
+        res.json({message: response.data.choices[0].text})
 
     }catch(e){
         console.log(e)
-        res.json({message: "\n\nWe apologize for the inconvenience, but our server is currently experiencing a high volume of traffic, which may cause delays in accessing our website or services. Our team is actively working to resolve this issue and improve server performance to provide you with the best possible experience.\n"+ e})
+        res.json({message: "We apologize for the inconvenience, but our server is currently experiencing a high volume of traffic, which may cause delays in accessing our website or services. Our team is actively working to resolve this issue and improve server performance to provide you with the best possible experience.\n"+ e})
     }
 })

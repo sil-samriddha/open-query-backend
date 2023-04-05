@@ -1,4 +1,4 @@
-// text-davinci-003 model
+// gpt-3.5-turbo
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
@@ -15,9 +15,8 @@ app.use(bodyParser.json())
 
 // Configure
 const configuration = new Configuration({
-    //organization: "org-5d5ojcAOKgoWhCgNjBYV7hsV",
-    organization: "org-KB0AJJZ7M1g2iKGzzczx4sCm",
-    apiKey: process.env.API_KEY 
+    organization: "",
+    apiKey: ""
 })
 const openai = new OpenAIApi(configuration)
 
@@ -28,22 +27,21 @@ app.listen(port, ()=>console.log(`listening on port ${port}`))
 
 // dummy route
 app.get("/", (req, res) => {
-    res.send(`Server is running on port : ${port}`)
+    res.send(`Open Query Server is running on port : ${port}`)
 })
 
 
-//post route
+//post rout
 app.post('/', async (req, res)=>{
-    const {message} = req.body
-
+    const {message} = req.body;
     try{
-        const response = await openai.createCompletion({
-            model: "text-davinci-003",
-            prompt: `${message}`,
-            max_tokens: 512,
-            temperature: .5
+        const response = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {role: "user", content: `${message}`},
+            ]
         })
-        res.json({message: response.data.choices[0].text})
+        res.json({message: response.data.choices[0].message.content})
 
     }catch(e){
         console.log(e)
